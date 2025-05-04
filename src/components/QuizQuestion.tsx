@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -26,13 +26,16 @@ const QuizQuestion = ({
   currentQuestion,
   totalQuestions
 }: QuizQuestionProps) => {
+  // Используем ключ для полного пересоздания компонента RadioGroup при смене вопроса
+  const [key, setKey] = useState(question.id);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-
-  // Сбрасываем выбранный ответ при изменении id вопроса
+  
+  // При изменении ID вопроса обновляем ключ и сбрасываем выбор
   useEffect(() => {
+    setKey(question.id);
     setSelectedOption(null);
   }, [question.id]);
-
+  
   const handleOptionChange = (value: string) => {
     const answerIndex = parseInt(value);
     setSelectedOption(answerIndex);
@@ -41,8 +44,6 @@ const QuizQuestion = ({
 
   const handleNext = () => {
     onNext();
-    // Дополнительный сброс при переходе
-    setSelectedOption(null);
   };
 
   return (
@@ -55,7 +56,9 @@ const QuizQuestion = ({
       <CardContent>
         <h3 className="text-xl font-medium mb-6">{question.text}</h3>
         
+        {/* Добавляем key для принудительного перерендера */}
         <RadioGroup 
+          key={key}
           value={selectedOption !== null ? selectedOption.toString() : undefined} 
           onValueChange={handleOptionChange}
           className="space-y-4"
