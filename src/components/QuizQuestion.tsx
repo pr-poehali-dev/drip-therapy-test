@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -28,6 +28,11 @@ const QuizQuestion = ({
 }: QuizQuestionProps) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
+  // Сбрасываем выбранный ответ при изменении id вопроса
+  useEffect(() => {
+    setSelectedOption(null);
+  }, [question.id]);
+
   const handleOptionChange = (value: string) => {
     const answerIndex = parseInt(value);
     setSelectedOption(answerIndex);
@@ -36,7 +41,8 @@ const QuizQuestion = ({
 
   const handleNext = () => {
     onNext();
-    setSelectedOption(null); // Сбрасываем выбор при переходе к следующему вопросу
+    // Дополнительный сброс при переходе
+    setSelectedOption(null);
   };
 
   return (
